@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">GenerateThumbnailsFromVideoKotlin</string>
+    <string name="pick_video">Pick video</string>
 </resources>
