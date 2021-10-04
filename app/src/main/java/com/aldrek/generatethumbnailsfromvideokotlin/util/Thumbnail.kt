@@ -1,23 +1,37 @@
+package com.aldrek.generatethumbnailsfromvideokotlin.util
+
 import android.content.Context
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
+import com.aldrek.generatethumbnailsfromvideokotlin.util.Thumbnail.Companion.GENERATEDIMAGESIZE
+import com.aldrek.generatethumbnailsfromvideokotlin.util.Thumbnail.Companion.GENERATEDIMAGETYPE
 import java.io.ByteArrayOutputStream
 import java.util.*
 import java.util.concurrent.TimeUnit
-
 
 /**
  *
  *  Generate images at specific periods
  *
  */
-fun AppCompatActivity.generatePhotos(returnValue: String?): MutableList<Uri> {
+class Thumbnail{
+
+    companion object{
+        val GENERATEDIMAGETYPE: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG
+        const val GENERATEDIMAGESIZE: Int = 100
+        const val FILEPATH: String = "pix/thumbnail"
+        val REQUEST = 101
+    }
+
+}
+
+fun AppCompatActivity.generatePhotos(returnValue: String?, intervalList: MutableList<Double>): MutableList<Uri> {
 
     var list: MutableList<Uri> = mutableListOf()
-    var intervals = mutableListOf(0.0, 0.25, 0.5, 0.75)
+    var intervals = intervalList
 
     for (period in intervals) {
         generateSinglePhoto(returnValue, period)?.let {
@@ -28,7 +42,6 @@ fun AppCompatActivity.generatePhotos(returnValue: String?): MutableList<Uri> {
     return list
 
 }
-
 
 /**
  * Generate single image at specific time
@@ -42,16 +55,10 @@ fun AppCompatActivity.generateSinglePhoto(returnValue: String?, period: Double):
     var retriever = MediaMetadataRetriever()
     try {
         retriever.setDataSource(returnValue)
-
         val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-
         val timeInmillisec = time!!.toLong()
 
-        val duration = timeInmillisec / 1000
-        val hours = duration / 3600
-        val minutes = (duration - hours * 3600) / 60
-        val seconds = duration - (hours * 3600 + minutes * 60)
-
+        val seconds = ((timeInmillisec / 1000) % 60)
         var slice = TimeUnit.MICROSECONDS.convert((seconds * period).toLong(), TimeUnit.SECONDS)
 
         var myBitmap = retriever.getFrameAtTime(
@@ -68,7 +75,6 @@ fun AppCompatActivity.generateSinglePhoto(returnValue: String?, period: Double):
         return null
     }
 
-
 }
 
 /**
@@ -81,7 +87,7 @@ fun AppCompatActivity.generateSinglePhoto(returnValue: String?, period: Double):
  */
 fun getImageUri(inContext: Context, inImage: Bitmap, name: String): Uri? {
     val bytes = ByteArrayOutputStream()
-    inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+    inImage.compress(GENERATEDIMAGETYPE, GENERATEDIMAGESIZE, bytes)
     val path: String =
         MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, name, null)
     return Uri.parse(path)

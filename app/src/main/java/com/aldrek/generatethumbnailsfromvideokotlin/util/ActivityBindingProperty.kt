@@ -1,4 +1,4 @@
-package com.aldrek.generatethumbnailsfromvideokotlin.util.binding
+package com.aldrek.generatethumbnailsfromvideokotlin.util
 
 import android.view.LayoutInflater
 import android.view.View
