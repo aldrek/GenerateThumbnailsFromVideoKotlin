@@ -3,7 +3,7 @@
 [![Issues][issues-shield]][issues-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-## 🚧 Description
+## About The Project
 
 Thumbnails are important to show a preview for any video. It gives you the ability to see a fast glance at the video without opening the video.
 
@@ -11,7 +11,9 @@ Thumbnails are important to show a preview for any video. It gives you the abili
 ## 🚧 Roadmap
 
 See the [open issues](https://github.com/roshanlam/ReadMeTemplate/issues) for a list of proposed features (and known issues).
-
+- [x] Add video picker
+- [x] Generate thumbnails
+- [] Integrate compose 
 
 
 <!-- CONTRIBUTING -->
