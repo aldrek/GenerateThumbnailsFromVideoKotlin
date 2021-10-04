@@ -3,7 +3,7 @@
 [![Issues][issues-shield]][issues-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-## About The Project
+## 📝 About The Project
 
 Thumbnails are important to show a preview for any video. It gives you the ability to see a fast glance at the video without opening the video.
 
