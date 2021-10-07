@@ -34,7 +34,7 @@ Describe your License for your project.
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
-https://github-readme-medium-recent-article.vercel.app/medium/@ahmadsalman327?p=d2b3405fc894
+https://github-readme-medium-recent-article.vercel.app/medium/@ahmadsalman327?p=0
 
 <!-- CONTACT -->
 ## 📫 Contact
