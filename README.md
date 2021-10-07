@@ -34,13 +34,15 @@ Describe your License for your project.
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
+https://github-readme-medium-recent-article.vercel.app/medium/@ahmadsalman327/d2b3405fc894
 
 <!-- CONTACT -->
 ## 📫 Contact
 
 Email - ahmadsalman327@gmail.com
+ 
 
-
+  
 [forks-shield]: https://img.shields.io/github/forks/aldrek/GenerateThumbnailsFromVideoKotlin?style=for-the-badge
 [forks-url]: https://github.com/aldrek/GenerateThumbnailsFromVideoKotlin/network/members
 
