@@ -7,6 +7,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.aldrek.generatethumbnailsfromvideokotlin.R
 import com.aldrek.generatethumbnailsfromvideokotlin.util.inflate
+import com.aldrek.generatethumbnailsfromvideokotlin.util.setImageWithRadius
 
 class ThumbnailsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -26,7 +27,10 @@ class ThumbnailsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        holder.itemView.findViewById<ImageView>(R.id.imageView).setImageURI(photos!![position])
+
+        var url = photos!![position]
+        holder.itemView.findViewById<ImageView>(R.id.imageView).setImageWithRadius( url , 20 )
+
     }
 
     override fun getItemCount(): Int {

@@ -7,16 +7,32 @@ import com.fxn.pix.Pix
 import android.app.Activity
 
 import android.content.Intent
+import android.net.Uri
 import androidx.recyclerview.widget.GridLayoutManager
 import com.aldrek.generatethumbnailsfromvideokotlin.adapter.ThumbnailsAdapter
 import com.aldrek.generatethumbnailsfromvideokotlin.util.*
 import com.aldrek.generatethumbnailsfromvideokotlin.util.Thumbnail.Companion.FILEPATH
 import com.aldrek.generatethumbnailsfromvideokotlin.util.Thumbnail.Companion.REQUEST
+import com.aldrek.generatethumbnailsfromvideokotlin.util.extention.hideView
+import com.aldrek.generatethumbnailsfromvideokotlin.util.extention.showView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.*
 
+// TODO: 10/9/21 Code
+//        -> Make two ways of cutting the video ( Sequential , At specific times )
+//        -> Finish the project without compose
 
-public class MainActivity : AppCompatActivity() {
+// TODO: 10/9/21 Article
+//        -> Write the best introduction to clarify about the uses of this application
+//        -> Give a more details about the video and how it consisted and then how we slice the video
+//        -> Clarify the difference between the two ways of cutting the videos
+//        -> Provide gif videos to more clarification
 
-    // TODO: 9/22/21 MVVM with compose
+class MainActivity : AppCompatActivity() {
+
     // compose way of doing this stuff
     var mAdapter: ThumbnailsAdapter? = null
     private var returnValue: String = ""
@@ -27,7 +43,7 @@ public class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Delete generated folder
-   //     FileUtil.deleteWholeDirectory(Thumbnail.FILEPATH)
+        // FileUtil.deleteWholeDirectory(Thumbnail.FILEPATH)
 
         mAdapter = ThumbnailsAdapter()
         binding.recyclerView.apply {
@@ -36,9 +52,9 @@ public class MainActivity : AppCompatActivity() {
         }
 
         binding.tvPick.setOnClickListener {
-            this@MainActivity.startCameraForVideo(REQUEST , FILEPATH)
+            this@MainActivity.startCameraForVideo(REQUEST, FILEPATH)
+            binding.progress.showView()
         }
-
 
     }
 
@@ -49,46 +65,67 @@ public class MainActivity : AppCompatActivity() {
 
             val returnValue = data?.getStringArrayListExtra(Pix.IMAGE_RESULTS)
             var videoUri = returnValue?.get(0)!!
-            mAdapter?.photos =   generatePhotos(videoUri , mutableListOf(0.0, 0.25, 0.5, 0.75))
+            var values: MutableList<Uri>
 
+            GlobalScope.launch {
+
+
+                withContext(Dispatchers.Default) {
+                    values = generatePhotos(videoUri, mutableListOf(0.0, 0.25, 0.5, 0.75))
+                }
+
+                withContext(Dispatchers.Main) {
+                    mAdapter?.photos = values
+                    binding.progress.hideView()
+                }
+
+            }
+
+        }else{
+            binding.progress.hideView()
         }
 
     }
 
 }
 
-
 fun main() {
 //  print( getConcatenation(intArrayOf(10 , 20)).toString())
-    print(reversePrefix("abedee" , 'e'))
+//    print(reversePrefix("abedee" , 'e'))
+
+    var date = Calendar.getInstance()
+    var date1 = Calendar.getInstance()
+    date1.set(Calendar.HOUR_OF_DAY, 5)
+
 }
 
 fun reversePrefix(word: String, ch: Char) {
     var position = word.indexOf(ch)
-    var reversedString = word.substring(0,position+1).reversed()
-    var notReversedString = word.substring(position+1,word.length)
+    var reversedString = word.substring(0, position + 1).reversed()
+    var notReversedString = word.substring(position + 1, word.length)
 //    print(reversedString)
 
-    print(reversedString( word ,position ) + notReversedString(word , position ))
+    print(reversedString(word, position) + notReversedString(word, position))
 
 }
 
-fun reversedString(word :String ,position : Int): String {
-    return    word.substring(0,position+1).reversed()
+fun reversedString(word: String, position: Int): String {
+    return word.substring(0, position + 1).reversed()
 }
 
-fun notReversedString(word :String ,position : Int): String {
-    return word.substring(position+1,word.length)
+fun notReversedString(word: String, position: Int): String {
+    return word.substring(position + 1, word.length)
 }
 
-fun reverseArray(){
+fun reverseArray() {
 
 }
-
 
 fun getConcatenation(nums: IntArray): IntArray {
-    var concatenatedList =  nums.plus(nums)
+    var concatenatedList = nums.plus(nums)
     return concatenatedList
 }
+
+
 
 

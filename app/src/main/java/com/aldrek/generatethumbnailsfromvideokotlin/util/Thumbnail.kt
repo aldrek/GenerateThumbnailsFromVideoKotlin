@@ -30,6 +30,8 @@ class Thumbnail{
 
 fun AppCompatActivity.generatePhotos(returnValue: String?, intervalList: MutableList<Double>): MutableList<Uri> {
 
+    // two kinds of cutting either a sequential order or at specific times
+
     var list: MutableList<Uri> = mutableListOf()
     var intervals = intervalList
 
@@ -91,5 +93,15 @@ fun getImageUri(inContext: Context, inImage: Bitmap, name: String): Uri? {
     val path: String =
         MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, name, null)
     return Uri.parse(path)
+
+}
+
+fun getImagesUri(): String {
+    return ""
+}
+
+
+enum class SliceType(){
+    sequenial ,
 }
 
