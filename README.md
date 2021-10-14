@@ -41,7 +41,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Email - ahmadsalman327@gmail.com
  
-
+## Screenshots
+Add ToDo | Check Done | Edit Task | Delete Task
+--- | --- | --- | ---
   
 [forks-shield]: https://img.shields.io/github/forks/aldrek/GenerateThumbnailsFromVideoKotlin?style=for-the-badge
 [forks-url]: https://github.com/aldrek/GenerateThumbnailsFromVideoKotlin/network/members
