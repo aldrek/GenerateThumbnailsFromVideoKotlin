@@ -1,22 +1,33 @@
 package com.aldrek.generatethumbnailsfromvideokotlin.util
 
+import android.content.Context
 import android.os.Environment
+import com.aldrek.generatethumbnailsfromvideokotlin.activity.MainActivity
 import java.io.File
+import java.io.IOException
 
 class FileUtil {
 
-    companion object{
+    companion object {
 
-        fun deleteWholeDirectory(filePath :String){
-            val dir = File(Environment.getExternalStorageDirectory().toString() + "$filePath")
-            if (dir.isDirectory) {
-                val children = dir.list()
-                for (i in children.indices) {
-                    File(dir, children[i]).delete()
+        fun deleteWholeDirectory( filePath: String) {
+            deleteFiles("${Environment.getExternalStorageDirectory().absolutePath}$filePath")
+
+        }
+
+        fun deleteFiles(path: String) {
+            val file = File(path)
+            if (file.exists()) {
+                val deleteCmd = "rm -r $path"
+                val runtime = Runtime.getRuntime()
+                try {
+                    runtime.exec(deleteCmd)
+                } catch (e: IOException) {
                 }
             }
         }
-    }
 
+
+    }
 
 }

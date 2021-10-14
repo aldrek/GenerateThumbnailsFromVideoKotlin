@@ -8,42 +8,38 @@ import android.app.Activity
 
 import android.content.Intent
 import android.net.Uri
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.GridLayoutManager
+import com.aldrek.generatethumbnailsfromvideokotlin.R
 import com.aldrek.generatethumbnailsfromvideokotlin.adapter.ThumbnailsAdapter
 import com.aldrek.generatethumbnailsfromvideokotlin.util.*
+import com.aldrek.generatethumbnailsfromvideokotlin.util.Thumbnail.Companion.FILENAME
 import com.aldrek.generatethumbnailsfromvideokotlin.util.Thumbnail.Companion.FILEPATH
 import com.aldrek.generatethumbnailsfromvideokotlin.util.Thumbnail.Companion.REQUEST
 import com.aldrek.generatethumbnailsfromvideokotlin.util.extention.hideView
 import com.aldrek.generatethumbnailsfromvideokotlin.util.extention.showView
+import com.aldrek.generatethumbnailsfromvideokotlin.util.extention.showViewWithBooleanInVisable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
-// TODO: 10/9/21 Code
-//        -> Make two ways of cutting the video ( Sequential , At specific times )
-//        -> Finish the project without compose
-
-// TODO: 10/9/21 Article
-//        -> Write the best introduction to clarify about the uses of this application
-//        -> Give a more details about the video and how it consisted and then how we slice the video
-//        -> Clarify the difference between the two ways of cutting the videos
-//        -> Provide gif videos to more clarification
-
 class MainActivity : AppCompatActivity() {
-
+    //
     // compose way of doing this stuff
     var mAdapter: ThumbnailsAdapter? = null
-    private var returnValue: String = ""
-    val binding: ActivityMainBinding by viewBinding(ActivityMainBinding::inflate)
+    private val binding: ActivityMainBinding by viewBinding(ActivityMainBinding::inflate)
+    private var sliceType: SliceType = SliceType.SEQUENTIAL
+    private var sliceSequentialType: SliceTypeSequential = SliceTypeSequential.START
+    private var videoUri:String =""
+    var values: MutableList<Uri> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
-        // Delete generated folder
-        // FileUtil.deleteWholeDirectory(Thumbnail.FILEPATH)
 
         mAdapter = ThumbnailsAdapter()
         binding.recyclerView.apply {
@@ -56,6 +52,68 @@ class MainActivity : AppCompatActivity() {
             binding.progress.showView()
         }
 
+        binding.tvDelete.setOnClickListener {
+            FileUtil.deleteWholeDirectory(FILENAME)
+        }
+
+        binding.spinnerSliceSequentialType.onItemSelectedListener = object :
+            AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                sliceSequentialType =
+                    SliceTypeSequential.valueOf(parent?.getItemAtPosition(position) as String)
+                sliceVideo()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+        }
+
+        binding.spinnerSliceType.onItemSelectedListener = object :
+            AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                sliceType = SliceType.valueOf(parent?.getItemAtPosition(position) as String)
+                binding.spinnerSliceSequentialType.showViewWithBooleanInVisable(sliceType == SliceType.SEQUENTIAL)
+                sliceVideo()
+
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+        }
+
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.sice_array_type,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.spinnerSliceType.adapter = adapter
+        }
+
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.sice_array_sequential_type,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.spinnerSliceSequentialType.adapter = adapter
+        }
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -64,68 +122,54 @@ class MainActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST) {
 
             val returnValue = data?.getStringArrayListExtra(Pix.IMAGE_RESULTS)
-            var videoUri = returnValue?.get(0)!!
-            var values: MutableList<Uri>
+            videoUri = returnValue?.get(0)!!
+            sliceVideo()
 
-            GlobalScope.launch {
-
-
-                withContext(Dispatchers.Default) {
-                    values = generatePhotos(videoUri, mutableListOf(0.0, 0.25, 0.5, 0.75))
-                }
-
-                withContext(Dispatchers.Main) {
-                    mAdapter?.photos = values
-                    binding.progress.hideView()
-                }
-
-            }
-
-        }else{
+        } else {
             binding.progress.hideView()
         }
 
     }
 
+    private fun sliceVideo() {
+        if(videoUri.isNullOrEmpty()) return
+        binding.progress.showView()
+        GlobalScope.launch {
+
+            withContext(Dispatchers.Default) {
+                when (sliceType) {
+                    SliceType.CUSTOM_SEQUENTIAL -> values = generatePhotos(
+                        videoUri,
+                        sliceType = SliceType.CUSTOM_TIME,
+                        sliceCustom = mutableListOf(0.0, 0.25, 0.5, 0.75)
+                    )
+
+                    SliceType.SEQUENTIAL -> values = generatePhotos(
+                        videoUri,
+                        sliceType = SliceType.SEQUENTIAL,
+                        sliceSequentialType = sliceSequentialType
+                    )
+
+                    SliceType.CUSTOM_TIME -> values = generatePhotosWithSpecificTime(
+                        videoUri,
+                        mutableListOf(10.0, 15.0, 20.0)
+                    )
+
+                }
+
+
+            }
+
+            withContext(Dispatchers.Main) {
+                mAdapter?.photos = values
+                binding.progress.hideView()
+            }
+
+        }
+
+    }
+
+
 }
-
-fun main() {
-//  print( getConcatenation(intArrayOf(10 , 20)).toString())
-//    print(reversePrefix("abedee" , 'e'))
-
-    var date = Calendar.getInstance()
-    var date1 = Calendar.getInstance()
-    date1.set(Calendar.HOUR_OF_DAY, 5)
-
-}
-
-fun reversePrefix(word: String, ch: Char) {
-    var position = word.indexOf(ch)
-    var reversedString = word.substring(0, position + 1).reversed()
-    var notReversedString = word.substring(position + 1, word.length)
-//    print(reversedString)
-
-    print(reversedString(word, position) + notReversedString(word, position))
-
-}
-
-fun reversedString(word: String, position: Int): String {
-    return word.substring(0, position + 1).reversed()
-}
-
-fun notReversedString(word: String, position: Int): String {
-    return word.substring(position + 1, word.length)
-}
-
-fun reverseArray() {
-
-}
-
-fun getConcatenation(nums: IntArray): IntArray {
-    var concatenatedList = nums.plus(nums)
-    return concatenatedList
-}
-
-
 
 

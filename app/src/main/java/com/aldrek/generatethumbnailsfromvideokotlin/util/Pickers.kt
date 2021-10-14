@@ -11,12 +11,16 @@ import com.fxn.pix.Pix
 fun AppCompatActivity.startCameraForVideo(request: Int , filePath :String) {
 
     val options = Options.init()
-        .setRequestCode(request)
+        .setRequestCode(request) //Request code for activity results
+        .setCount(1) //Number of images to restict selection count
         .setMode(Options.Mode.Video)
-        .setCount(1)
-        .setVideoDurationLimitinSeconds(15)
-        .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
-        .setPath("$filePath") //Custom Path For media Storage
+        .setFrontfacing(false) //Front Facing camera on start
+        .setSpanCount(4) //Span count for gallery min 1 & max 5
+        .setVideoDurationLimitinSeconds(30) //Duration for video recording
+        .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT) //Orientaion
+        .setPath("/pix/images") //Custom Path For media Storage
+
+
 
     Pix.start(this, options)
 

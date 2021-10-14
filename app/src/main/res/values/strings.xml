@@ -1,5 +1,21 @@
 <resources>
     <string name="app_name">GenerateThumbnailsFromVideoKotlin</string>
     <string name="pick_video">Pick video</string>
+    <string name="clear_image">Clear images</string>
     <string name="title_activity_compose">ComposeActivity</string>
+
+    <string-array name="sice_array_sequential_type">
+        <item>START</item>
+        <item>START_TO_MIDDLE</item>
+        <item>START_TO_END_WITHOUT_BETWEEN_MIDDLE</item>
+        <item>START_TO_END</item>
+    </string-array>
+
+    <string-array name="sice_array_type">
+        <item>SEQUENTIAL</item>
+        <item>CUSTOM_SEQUENTIAL</item>
+        <item>CUSTOM_TIME</item>
+    </string-array>
+
+
 </resources>
