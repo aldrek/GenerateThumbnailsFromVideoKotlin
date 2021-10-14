@@ -43,7 +43,7 @@ Email - ahmadsalman327@gmail.com
  
 ## Screenshots
 Sequentia | Custom Sequentia | Custom time
---- | --- | --- | ---
+--- | --- | ---
   
 [forks-shield]: https://img.shields.io/github/forks/aldrek/GenerateThumbnailsFromVideoKotlin?style=for-the-badge
 [forks-url]: https://github.com/aldrek/GenerateThumbnailsFromVideoKotlin/network/members
